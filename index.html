@@ -272,8 +272,10 @@ function triggerPwaInstall() {
 const apiKey = "AQ.Ab8RN6INRTJ3x6YPczZ8fI6IuwiY-2WvljjBgNicOVtDHfOfaw"; 
 
 function getApiUrl() {
-  const key = apiKey || (typeof window !== "undefined" && window.apiKey) || "";
-  return `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`;
+  if (apiKey.startsWith("AIzaSy")) {
+    return `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+  }
+  return `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent`;
 }
 
 // STATE VARIABLES
@@ -411,9 +413,16 @@ async function callGemini(payload, maxRetries = 5) {
   for (let i = 0; i < maxRetries; i++) {
     try {
       const url = getApiUrl();
+      
+      const headers = { "Content-Type": "application/json" };
+      if (apiKey.startsWith("AQ")) {
+        headers["Authorization"] = `Bearer ${apiKey}`;
+        headers["x-goog-api-key"] = apiKey;
+      }
+
       const res = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: headers,
         body: JSON.stringify(payload)
       });
 
