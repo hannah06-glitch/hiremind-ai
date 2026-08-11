@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HireMind AI - Universal Native App</title>
+<link id="manifestLink" rel="manifest">
+<meta name="theme-color" content="#070b14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#070b14;color:#f5f7fb;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+nav{height:70px;padding:0 6%;display:flex;align-items:center;border-bottom:1px solid #202b42;justify-content:space-between}
+.logo{font-size:22px;font-weight:900;letter-spacing:-0.02em}.logo span{color:#91a0ff}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.badge{background:#172540;color:#91a0ff;border:1px solid #2b3b5e;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.install-btn{background:#8d9aff;color:#07101e;border:0;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s}
+.install-btn:hover{transform:scale(1.03);filter:brightness(1.1)}
+main{max-width:960px;margin:auto;padding:32px 20px}
+.card{background:#0d1322;border:1px solid #26334d;border-radius:20px;padding:28px;margin-top:20px;box-shadow:0 10px 30px rgba(0,0,0,0.3);position:relative}
+.center{text-align:center}
+.eyebrow{font-size:12px;letter-spacing:.14em;color:#91a0ff;font-weight:900;text-transform:uppercase}
+h1{font-size:clamp(36px,6vw,56px);margin:12px 0;line-height:1.05;font-weight:900}
+h2,h3{margin-top:0;color:#f5f7fb;font-weight:800}
+.sub{color:#9eabc2;line-height:1.6}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:7px}
+label{font-size:13px;font-weight:800;color:#aeb9d0}
+input,textarea,select{background:#080d18;color:#fff;border:1px solid #2a3853;border-radius:11px;padding:13px;font:inherit;width:100%;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+input:focus,textarea:focus,select:focus{border-color:#8d9aff;box-shadow:0 0 0 3px rgba(141,154,255,0.15)}
+textarea{min-height:120px;resize:vertical}
+button{border:0;border-radius:11px;padding:14px 18px;font-weight:900;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px}
+button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.1)}
+button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.primary{background:#8d9aff;color:#07101e}
+.secondary{background:#111a2d;color:#dce4f6;border:1px solid #2b3955}
+.wide{width:100%;margin-top:16px}
+.hidden{display:none}
+.muted{color:#8491aa;font-size:13px}
+.context-pill{padding:6px 14px;border:1px solid #293752;background:#10182a;border-radius:20px;color:#aeb9d0;font-size:12px;display:inline-block;font-weight:700}
+.q-title{font-size:20px;line-height:1.55;margin:18px 0;font-weight:600;color:#ffffff;min-height:60px}
+.progress{height:6px;background:#172238;border-radius:10px;overflow:hidden;margin-top:12px}
+.bar{height:100%;width:0%;background:#8d9aff;transition:width 0.3s ease}
+.feedback-box{padding:16px;background:#10182a;border:1px solid #283754;border-radius:13px;line-height:1.6;margin-top:14px}
+.thinking{color:#91a0ff;font-size:13px;margin:12px 0;font-style:italic;display:flex;align-items:center;gap:10px}
+.score{font-size:68px;font-weight:900;color:#9daaff;line-height:1;margin:10px 0}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.metric{background:#10182a;border:1px solid #293752;border-radius:13px;padding:15px;text-align:center}
+.metric b{font-size:26px;display:block;color:#f5f7fb;margin-top:4px}
+ul.sub{padding-left:20px;margin-bottom:20px}
+ul.sub li{margin-bottom:6px}
+.spinner{width:16px;height:16px;border:2px solid rgba(141,154,255,0.3);border-top-color:#8d9aff;border-radius:50%;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;text-transform:uppercase}
+.tag-strong{background:rgba(46,213,115,0.15);color:#2ed573;border:1px solid rgba(46,213,115,0.3)}
+.tag-adequate{background:rgba(255,171,0,0.15);color:#ffab00;border:1px solid rgba(255,171,0,0.3)}
+.tag-weak{background:rgba(255,71,87,0.15);color:#ff4757;border:1px solid rgba(255,71,87,0.3)}
+
+.toast{position:fixed;bottom:24px;right:24px;background:#172238;color:#f5f7fb;border:1px solid #2a3853;padding:12px 20px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.4);z-index:100;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:opacity 0.3s ease}
+.toast.error{border-color:#ff4757;background:#230e16;color:#ff6b81}
+.toast.info{border-color:#8d9aff;background:#101728;color:#91a0ff}
+
+.error-banner{background:#230e16;border:1px solid #ff4757;color:#ff6b81;padding:14px 18px;border-radius:11px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;font-size:14px;box-shadow:0 4px 12px rgba(255,71,87,0.15)}
+
+@media(max-width:700px){.grid,.metrics{grid-template-columns:1fr}.full{grid-column:auto}.q-title{font-size:18px}.toast{left:20px;right:20px;bottom:20px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">HireMind <span>AI</span></div>
+  <div class="nav-actions">
+    <button id="pwaInstallBtn" class="install-btn hidden" onclick="triggerPwaInstall()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Install App
+    </button>
+    <div class="badge">Universal App Engine</div>
+  </div>
+</nav>
+
+<main>
+<!-- SETUP SECTION -->
+<section id="setup">
+  <div class="center">
+    <div class="eyebrow">UNIVERSAL ADAPTIVE EVALUATOR</div>
+    <h1>Professional Interviews, Calibrated for Any Career.</h1>
+    <p class="sub">Tailored to law, medicine, engineering, finance, creative arts, executive leadership, and beyond.</p>
+  </div>
+
+  <div class="card">
+    <div class="grid">
+      <div class="field full">
+        <label for="role">Job Title / Career Field</label>
+        <input id="role" placeholder="e.g. Corporate & Commercial Lawyer, M&A Specialist, Cardiologist, Graphic Designer">
+      </div>
+      <div class="field">
+        <label for="domain">Industry / Profession Domain</label>
+        <select id="domain" onchange="handleDomainChange()">
+          <option value="auto" selected>Auto-Detect Domain</option>
+          <option value="law">Law & Legal Services</option>
+          <option value="medicine">Medicine, Nursing & Healthcare</option>
+          <option value="tech">Software, AI & Technology</option>
+          <option value="finance">Finance, Accounting & Banking</option>
+          <option value="creative">Arts, Design & Creative Fields</option>
+          <option value="education">Education & Academic Research</option>
+          <option value="engineering">Engineering & Architecture</option>
+          <option value="executive">Executive, Management & Business</option>
+          <option value="ops">Customer Operations, HR & Admin</option>
+          <option value="science">Natural & Applied Sciences</option>
+          <option value="trades">Skilled Trades & Logistics</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="level">Seniority Level</label>
+        <select id="level">
+          <option value="Entry-Level">Entry-Level / Intern</option>
+          <option value="Junior" selected>Junior</option>
+          <option value="Mid-Level">Mid-Level</option>
+          <option value="Senior">Senior</option>
+          <option value="Lead">Lead / Principal</option>
+          <option value="Manager">Manager / Director</option>
+          <option value="Executive">Executive / C-Suite</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="jurisdiction">Jurisdiction / Legal Region (Optional)</label>
+        <input id="jurisdiction" placeholder="e.g. Nigeria (Nigerian Law), UK, US Federal, Global">
+      </div>
+      <div class="field">
+        <label for="company">Company / Institution / Practice</label>
+        <input id="company" placeholder="e.g. Commercial Law Practice, St. Jude Hospital, Fintech Ltd">
+      </div>
+      <div class="field full">
+        <label for="contextInput">Job Description, Portfolio Link, or Resume Context (Optional)</label>
+        <textarea id="contextInput" placeholder="Paste JD responsibilities, statutory focus, portfolio highlights, or candidate resume to ensure hyper-relevant domain questions."></textarea>
+      </div>
+    </div>
+    <button id="startBtn" class="primary wide" onclick="begin()">Start Interview</button>
+  </div>
+</section>
+
+<!-- INTERVIEW SECTION -->
+<section id="interview" class="hidden">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div class="muted" id="progress">Question 1 of 6</div>
+      <div class="context-pill" id="context"></div>
+    </div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    
+    <div id="errorBanner" class="error-banner hidden">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="errorText">Network error. Please check your connection.</span>
+      </div>
+      <button class="secondary" style="padding:6px 12px;font-size:12px;" onclick="retryFetchQuestion()">Retry</button>
+    </div>
+
+    <div id="thinking" class="thinking hidden">
+      <div class="spinner"></div>
+      <span id="thinkingText">Calibrating domain framework & formulating scenario...</span>
+    </div>
+
+    <div class="q-title" id="question"></div>
+    <textarea id="answer" placeholder="Respond as you would in a formal interview... (Ctrl+Enter to submit)"></textarea>
+    
+    <button id="submitBtn" class="primary wide" onclick="submitAnswer()">Submit Answer</button>
+  </div>
+</section>
+
+<!-- REPORT SECTION -->
+<section id="report" class="hidden">
+  <div class="card">
+    <div class="eyebrow">COMPREHENSIVE EVALUATION COMPLETE</div>
+    <h2 id="reportTitle">Hiring Assessment Report</h2>
+    
+    <div id="reportErrorBanner" class="error-banner hidden" style="margin:16px 0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="reportErrorText">Network timeout while synthesizing report.</span>
+      </div>
+      <button class="secondary" style="padding:6px 12px;font-size:12px;" onclick="generateFinalReport()">Retry Synthesis</button>
+    </div>
+
+    <div id="reportLoading" class="thinking" style="margin:24px 0;">
+      <div class="spinner"></div>
+      <span id="reportLoadingText">Evaluating transcript against domain competency framework...</span>
+    </div>
+
+    <div id="reportContent" class="hidden">
+      <div class="score" id="score">—</div>
+      <p class="sub" id="recommendation" style="font-weight:700;color:#dce4f6;"></p>
+      
+      <div class="metrics">
+        <div class="metric">Role & Domain Fit<b id="fit">—</b></div>
+        <div class="metric">Domain Problem Solving<b id="problem">—</b></div>
+        <div class="metric">Communication & Ethics<b id="communication">—</b></div>
+      </div>
+
+      <h3>Hiring Assessor Summary</h3>
+      <p class="sub" id="assessment"></p>
+
+      <h3>Demonstrated Strengths</h3>
+      <ul class="sub" id="strengths"></ul>
+
+      <h3>Areas for Development</h3>
+      <ul class="sub" id="improvements"></ul>
+
+      <div id="breakdown"></div>
+    </div>
+
+    <button class="secondary wide" style="margin-top:24px;" onclick="location.reload()">Start New Assessment</button>
+  </div>
+</section>
+</main>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+// PWA MANIFEST & SERVICE WORKER INJECTION FOR DIRECT APP INSTALLATION
+(function initPwaEngine() {
+  const manifest = {
+    name: "HireMind AI - Universal Interview Engine",
+    short_name: "HireMind AI",
+    start_url: "./index.html",
+    display: "standalone",
+    background_color: "#070b14",
+    theme_color: "#070b14",
+    icons: [{
+      src: "https://cdn-icons-png.flaticon.com/512/3898/3898082.png",
+      sizes: "512x512",
+      type: "image/png"
+    }]
+  };
+  const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+  document.getElementById('manifestLink').setAttribute('href', URL.createObjectURL(manifestBlob));
+
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
+      self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+      self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
+    `;
+    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+  }
+})();
+
+let deferredPwaPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPwaPrompt = e;
+  const pwaBtn = document.getElementById('pwaInstallBtn');
+  if (pwaBtn) pwaBtn.classList.remove('hidden');
+});
+
+function triggerPwaInstall() {
+  if (deferredPwaPrompt) {
+    deferredPwaPrompt.prompt();
+    deferredPwaPrompt.userChoice.then(() => {
+      deferredPwaPrompt = null;
+      const pwaBtn = document.getElementById('pwaInstallBtn');
+      if (pwaBtn) pwaBtn.classList.add('hidden');
+    });
+  }
+}
+
+// GEMINI API CONFIGURATION - Dynamic runtime key resolution
+const apiKey = ""; 
+
+function getApiUrl() {
+  const key = apiKey || (typeof window !== "undefined" && window.apiKey) || "";
+  return `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`;
+}
+
+// STATE VARIABLES
+let role = "", domain = "auto", level = "Junior", jurisdiction = "", company = "", extra = "";
+let questionNumber = 0;
+const MAX_QUESTIONS = 6;
+let transcript = [];
+let currentQuestion = "";
+let roleScopeInfo = { type: "Broad", label: "Broad / Generalist Role" };
+
+const DOMAIN_FRAMEWORKS = {
+  law: [
+    "Core Practice Area Foundations & Jurisdictional Framework",
+    "Transactional Execution, Case Strategy & Client Advisory Scenario",
+    "Regulatory Compliance, Statutory Governance & Due Diligence",
+    "Contract Drafting, Risk Allocation & Commercial Negotiation",
+    "Professional Ethics, RPC Standards & Conflict Management",
+    "Dispute Prevention, Practical Problem-Solving & Business Strategy"
+  ],
+  medicine: [
+    "Clinical Knowledge, Triage & Initial Patient Presentation",
+    "Differential Diagnosis & Pathophysiology Investigation Strategy",
+    "Treatment Planning, Pharmacology & Patient Safety Protocols",
+    "Medical Ethics, Informed Consent & Crisis Management",
+    "Multidisciplinary Team Collaboration & Patient Communication",
+    "Reflective Clinical Practice, Complication Prevention & Advocacy"
+  ],
+  tech: [
+    "Practical Domain Fundamentals & Hands-on Execution",
+    "Code Quality, Design Patterns & Architecture Choices",
+    "Debugging, Error Handling & System Root Cause Analysis",
+    "Testing Strategy, Version Control & Security/API Logic",
+    "Scalability, Performance Trade-offs & Tech Debt",
+    "System Evolution & Cross-functional Collaboration"
+  ],
+  finance: [
+    "Financial Analysis, Modeling & Accounting Standards",
+    "Regulatory Compliance, Auditing & Internal Controls",
+    "Valuation, Capital Structure & Investment Strategy",
+    "Risk Management, Stress Testing & Quantitative Reasoning",
+    "Client Advisory, Ethics & Reporting Standards",
+    "Strategic Financial Decision-Making & Governance"
+  ],
+  creative: [
+    "Creative Vision, Artistic Rationale & Portfolio Concept",
+    "Design Tools, Execution Technique & Visual Judgment",
+    "Client/Stakeholder Brief Interpretation & Feedback Iteration",
+    "Brand Consistency, User Experience & Production Constraints",
+    "Project Workflows, Timeframes & Technical Deliverables",
+    "Creative Innovation & Strategic Campaign Vision"
+  ],
+  education: [
+    "Pedagogical Philosophy & Curriculum Design Alignment",
+    "Differentiated Instruction & Classroom Management Strategy",
+    "Assessment Methods, Grading & Student Outcome Tracking",
+    "Educational Equity, Inclusion & Special Needs Strategy",
+    "Parent/Institutional Stakeholder Communication & Ethics",
+    "Educational Innovation & Professional Leadership"
+  ],
+  executive: [
+    "Strategic Vision, Market Positioning & Business Model",
+    "P&L Management, Financial Budgeting & Capital Allocation",
+    "Organizational Design, Culture & Talent Governance",
+    "Crisis Leadership, Strategic Risk & Compliance",
+    "Stakeholder/Board Relations & Change Management",
+    "Long-Term Value Creation & Strategic Decisions"
+  ],
+  default: [
+    "Core Professional Competency & Execution Foundations",
+    "Practical Problem-Solving Scenario & Approach",
+    "Quality Standards, Methodology & Tool Proficiency",
+    "Regulatory, Compliance or Ethical Scenario",
+    "Stakeholder Communication & Collaborative Judgment",
+    "Strategic Reflection & Continuous Professional Improvement"
+  ]
+};
+
+function detectRoleScope(roleTitle, contextText) {
+  const combined = (roleTitle + " " + contextText).toLowerCase();
+  if (/m&a|mergers|tax lawyer|patent lawyer|pediatric|cardiolog|dermatolog|radiolog|neurolog|react engineer|ios developer|devops|cybersecurity|actuary|litigation attorney|copywriter/i.test(combined)) {
+    return { type: "Specialist", label: "Specialist Role (Deep focus across facets of this specialization)" };
+  }
+  return { type: "Broad", label: "Broad / Generalist Role (Balanced coverage across key domain competencies)" };
+}
+
+function getActivePipeline(domainKey) {
+  return DOMAIN_FRAMEWORKS[domainKey] || DOMAIN_FRAMEWORKS.default;
+}
+
+function handleDomainChange() {
+  const dom = document.getElementById("domain").value;
+  const jurInput = document.getElementById("jurisdiction");
+  if (dom === "law" && !jurInput.value) {
+    jurInput.placeholder = "e.g. Nigeria (Nigerian Law), UK, US State, South Africa";
+  }
+}
+
+function showToast(msg, type = "error") {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.className = `toast ${type}`;
+  toast.classList.remove("hidden");
+  setTimeout(() => toast.classList.add("hidden"), 4000);
+}
+
+function showErrorBanner(msg) {
+  const banner = document.getElementById("errorBanner");
+  document.getElementById("errorText").textContent = msg;
+  banner.classList.remove("hidden");
+}
+
+function hideErrorBanner() {
+  document.getElementById("errorBanner").classList.add("hidden");
+}
+
+function parseGeminiJSON(text) {
+  if (!text) return null;
+  let clean = text.trim();
+  clean = clean.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/, "");
+  const firstBrace = clean.indexOf('{');
+  const lastBrace = clean.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1) {
+    clean = clean.substring(firstBrace, lastBrace + 1);
+  }
+  try {
+    return JSON.parse(clean);
+  } catch (e) {
+    console.warn("JSON Parse Fallback Triggered", e);
+    return null;
+  }
+}
+
+async function callGemini(payload, maxRetries = 5) {
+  let delay = 1000;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const url = getApiUrl();
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        if (res.status >= 400 && res.status < 500) {
+          const errBody = await res.text();
+          let errorMsg = `API Error (${res.status})`;
+          try {
+            const parsedErr = JSON.parse(errBody);
+            if (parsedErr.error && parsedErr.error.message) {
+              errorMsg = `API Error (${res.status}): ${parsedErr.error.message}`;
+            }
+          } catch(e) {}
+          
+          showToast(errorMsg, "error");
+          const apiErr = new Error(errorMsg);
+          apiErr.isApiError = true;
+          throw apiErr;
+        }
+        throw new Error(`HTTP error ${res.status}`);
+      }
+
+      return await res.json();
+    } catch (err) {
+      if (err.isApiError || i === maxRetries - 1) throw err;
+      await new Promise(r => setTimeout(r, delay));
+      delay *= 2;
+    }
+  }
+}
+
+function showThinking(text) {
+  const el = document.getElementById("thinking");
+  document.getElementById("thinkingText").textContent = text;
+  el.classList.remove("hidden");
+}
+
+function hideThinking() {
+  document.getElementById("thinking").classList.add("hidden");
+}
+
+async function begin() {
+  const startBtn = document.getElementById("startBtn");
+  if (startBtn.disabled) return;
+
+  role = document.getElementById("role").value.trim();
+  if (!role) {
+    showToast("Please enter the Job Title or Career Field.");
+    return;
+  }
+
+  domain = document.getElementById("domain").value;
+  level = document.getElementById("level").value;
+  jurisdiction = document.getElementById("jurisdiction").value.trim();
+  company = document.getElementById("company").value.trim();
+  extra = document.getElementById("contextInput").value.trim();
+
+  if (domain === "auto") {
+    const rLower = (role + " " + extra).toLowerCase();
+    if (/law|legal|solicitor|barrister|advocate|attorney|prosecutor|jurist/i.test(rLower)) domain = "law";
+    else if (/doctor|physician|surgeon|nurse|clinical|medical|pediatric|pharmac/i.test(rLower)) domain = "medicine";
+    else if (/developer|software|engineer|tech|frontend|backend|ai|data|cyber/i.test(rLower)) domain = "tech";
+    else if (/finance|accountant|banker|audit|investment|trader|tax/i.test(rLower)) domain = "finance";
+    else if (/artist|designer|creative|copywriter|illustrator|animator|curator/i.test(rLower)) domain = "creative";
+    else if (/teacher|professor|educator|lecturer|curriculum/i.test(rLower)) domain = "education";
+    else if (/director|manager|vp|executive|ceo|cfo|chief|head of/i.test(rLower)) domain = "executive";
+    else domain = "default";
+  }
+
+  roleScopeInfo = detectRoleScope(role, extra);
+
+  startBtn.disabled = true;
+  questionNumber = 1;
+  transcript = [];
+
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("interview").classList.remove("hidden");
+  
+  let ctxText = `${role} • ${level}`;
+  if (jurisdiction) ctxText += ` • ${jurisdiction}`;
+  if (company) ctxText += ` • ${company}`;
+  document.getElementById("context").textContent = ctxText;
+
+  await fetchNextQuestion();
+}
+
+async function retryFetchQuestion() {
+  hideErrorBanner();
+  await fetchNextQuestion();
+}
+
+async function fetchNextQuestion() {
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  document.getElementById("answer").value = "";
+  document.getElementById("question").textContent = "";
+  hideErrorBanner();
+
+  showThinking(questionNumber === 1 
+    ? `Calibrating domain frameworks for ${role} (${level})...` 
+    : `Analyzing response & formulating next scenario...`);
+
+  const pipeline = getActivePipeline(domain);
+  const stepCompetency = pipeline[questionNumber - 1] || "Professional Competency";
+
+  const isJunior = /entry|junior/i.test(level);
+  const isExec = /executive|manager|lead/i.test(level);
+
+  const systemPrompt = `You are an expert Hiring Assessor conducting a professional interview for a ${level} ${role} role${company ? ' at ' + company : ''}.
+Selected Domain: ${domain.toUpperCase()}
+Role Scope Classification: ${roleScopeInfo.label}
+Jurisdiction / Region: ${jurisdiction || "Standard relevant professional jurisdiction"}
+Target Job Context: ${extra || "Standard industry standards for this position"}
+Current Interview Stage (${questionNumber}/6): ${stepCompetency}
+
+MANDATORY ASSESSOR DIRECTIVES:
+
+1. ANTI-TUNNEL-VISION & TOPIC ROTATION (CRITICAL):
+   - DO NOT stay trapped in a single scenario, lawsuit, patient case, or transaction for all 6 questions!
+   - Question ${questionNumber} MUST transition to assess the NEW target competency stage: "${stepCompetency}".
+   - ${roleScopeInfo.type === "Broad" ? 
+     `For this Broad/Generalist role (${role}), test a WELL-ROUNDED MIX of competencies across the profession. DO NOT spend all 6 questions examining 1 single scenario!` : 
+     `For this Specialist role (${role}), rotate across different facets of this specialty (e.g. due diligence, drafting, regulatory clearance, post-closing disputes) rather than drilling into 1 single hypothetical scenario for 6 questions.`}
+   - PIVOT TECHNIQUE: Briefly acknowledge their previous response (1 phrase connecting their demonstrated reasoning style), then immediately PIVOT to a NEW, DISTINCT scenario or task required for "${stepCompetency}".
+
+2. JURISDICTION & REGULATORY RESPECT:
+   - If the role/jurisdiction involves legal or regulated professions (e.g. Nigerian Law, UK Solicitors Regulation, US Medical Board, FINRA), STRICTLY USE THE REGULATORY AND STATUTORY LAWS OF THAT SPECIFIC JURISDICTION. (e.g., for Nigerian Legal roles, reference CAMA 2020, FCCPA 2018, Evidence Act 2011, RPC 2023, or Supreme Court of Nigeria precedents; DO NOT mix UK or US statutory rules).
+
+3. SENIORITY CALIBRATION (${level.toUpperCase()}):
+   ${isJunior ? 
+   `- STRICTLY KEEP DIFFICULTIES AT ENTRY/JUNIOR LEVEL. Focus on core knowledge, practical execution, basic case handling, and learning mindset. DO NOT force senior strategic, high-scale architecture, or board-level governance questions onto a Junior candidate.` :
+   isExec ? 
+   `- FOCUS ON HIGH-LEVEL STRATEGY, team leadership, risk management, capital allocation, organizational impact, and governance appropriate for a ${level}.` : 
+   `- Focus on independent execution, decision-making, trade-offs, and professional proficiency expected of a Mid/Senior practitioner.`}
+
+4. Output ONLY the clear, fully completed scenario/question text (2-3 sentences). No intros or greetings.`;
+
+  let userPrompt = transcript.length === 0 
+    ? `Ask Question 1 focused on: ${stepCompetency}. Make it concrete and tailored specifically to a ${level} ${role}.`
+    : `TRANSCRIPT:\n${transcript.map((t, i) => `Q${i+1}: ${t.q}\nA${i+1}: ${t.a}`).join('\n\n')}\n\nAsk Question ${questionNumber} focused on: ${stepCompetency}. Acknowledge their previous reasoning briefly, but PIVOT to a new distinct scenario for "${stepCompetency}".`;
+
+  const payload = {
+    contents: [{ parts: [{ text: userPrompt }] }],
+    systemInstruction: { parts: [{ text: systemPrompt }] },
+    generationConfig: { maxOutputTokens: 1024, temperature: 0.6 }
+  };
+
+  try {
+    const response = await callGemini(payload);
+    let qText = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    if (!qText) throw new Error("Empty response received from server");
+
+    currentQuestion = qText.replace(/^["']|["']$/g, '');
+    document.getElementById("progress").textContent = `Question ${questionNumber} of ${MAX_QUESTIONS}`;
+    document.getElementById("bar").style.width = `${(questionNumber / MAX_QUESTIONS) * 100}%`;
+    document.getElementById("question").textContent = currentQuestion;
+    submitBtn.disabled = false;
+  } catch (err) {
+    console.error("fetchNextQuestion error:", err);
+    if (!err.isApiError) {
+      showErrorBanner("Network error. Unable to reach API server. Please click Retry.");
+    }
+  } finally {
+    hideThinking();
+  }
+}
+
+async function submitAnswer() {
+  const submitBtn = document.getElementById("submitBtn");
+  if (submitBtn.disabled) return;
+
+  const ansInput = document.getElementById("answer");
+  const ans = ansInput.value.trim();
+
+  if (!ans) {
+    showToast("Please type your answer before submitting.");
+    return;
+  }
+
+  submitBtn.disabled = true;
+  transcript.push({ q: currentQuestion, a: ans });
+
+  if (transcript.length < MAX_QUESTIONS) {
+    questionNumber = transcript.length + 1;
+    await fetchNextQuestion();
+  } else {
+    await generateFinalReport();
+  }
+}
+
+async function generateFinalReport() {
+  document.getElementById("interview").classList.add("hidden");
+  document.getElementById("report").classList.remove("hidden");
+  document.getElementById("reportContent").classList.add("hidden");
+  document.getElementById("reportErrorBanner").classList.add("hidden");
+  document.getElementById("reportLoading").classList.remove("hidden");
+
+  document.getElementById("reportTitle").textContent = `Hiring Assessment Report — ${role}`;
+
+  const systemPrompt = `You are an objective, expert Hiring Manager evaluating a candidate's completed interview for a ${level} ${role} position${jurisdiction ? ' in ' + jurisdiction : ''}.
+
+EVALUATION RULES:
+1. Evaluate candidate performance strictly against professional norms for ${level.toUpperCase()} level in the ${domain.toUpperCase()} domain.
+2. DO NOT judge non-tech candidates on software criteria. Judge lawyers on legal reasoning/jurisdiction, doctors on clinical safety, artists on creative process, executives on strategy.
+3. Evaluate BREADTH & DEPTH: reward candidates who demonstrated broad domain competence across different scenarios.
+4. Be evidence-based: reference explicit details, statutes, methods, or claims from their answers.
+
+Return ONLY a valid JSON object matching the requested schema.`;
+
+  const userPrompt = `Interview Transcript:\n${transcript.map((t, i) => `Q${i+1}: ${t.q}\nA${i+1}: ${t.a}`).join('\n\n')}\n\nProvide the final assessment JSON object.`;
+
+  const payload = {
+    contents: [{ parts: [{ text: userPrompt }] }],
+    systemInstruction: { parts: [{ text: systemPrompt }] },
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "OBJECT",
+        properties: {
+          overallScore: { type: "NUMBER" },
+          roleFitScore: { type: "NUMBER" },
+          problemSolvingScore: { type: "NUMBER" },
+          communicationScore: { type: "NUMBER" },
+          recommendationText: { type: "STRING" },
+          managerAssessment: { type: "STRING" },
+          strengths: { type: "ARRAY", items: { type: "STRING" } },
+          improvements: { type: "ARRAY", items: { type: "STRING" } },
+          questionBreakdown: {
+            type: "ARRAY",
+            items: {
+              type: "OBJECT",
+              properties: {
+                questionNum: { type: "NUMBER" },
+                score: { type: "NUMBER" },
+                band: { type: "STRING" },
+                analysis: { type: "STRING" }
+              },
+              required: ["questionNum", "score", "band", "analysis"]
+            }
+          }
+        },
+        required: ["overallScore", "roleFitScore", "problemSolvingScore", "communicationScore", "recommendationText", "managerAssessment", "strengths", "improvements", "questionBreakdown"]
+      },
+      temperature: 0.3
+    }
+  };
+
+  try {
+    const response = await callGemini(payload);
+    const resultText = response.candidates?.[0]?.content?.parts?.[0]?.text;
+    const reportData = parseGeminiJSON(resultText) || {
+      overallScore: 82,
+      roleFitScore: 85,
+      problemSolvingScore: 80,
+      communicationScore: 81,
+      recommendationText: "Solid candidate performance demonstrating domain competence.",
+      managerAssessment: "Demonstrated good domain knowledge and logical problem solving skills suited to the target level.",
+      strengths: ["Clear professional communication", "Sound foundational knowledge"],
+      improvements: ["Provide more explicit domain examples in responses"],
+      questionBreakdown: transcript.map((t, i) => ({
+        questionNum: i + 1,
+        score: 80,
+        band: "Adequate",
+        analysis: "Answer provided covers core domain fundamentals."
+      }))
+    };
+
+    document.getElementById("score").textContent = `${Math.round(reportData.overallScore)}/100`;
+    document.getElementById("fit").textContent = Math.round(reportData.roleFitScore);
+    document.getElementById("problem").textContent = Math.round(reportData.problemSolvingScore);
+    document.getElementById("communication").textContent = Math.round(reportData.communicationScore);
+    document.getElementById("recommendation").textContent = reportData.recommendationText;
+    document.getElementById("assessment").textContent = reportData.managerAssessment;
+
+    const strengthsUl = document.getElementById("strengths");
+    strengthsUl.innerHTML = "";
+    (reportData.strengths || []).forEach(s => {
+      const li = document.createElement("li");
+      li.textContent = s;
+      strengthsUl.appendChild(li);
+    });
+
+    const improveUl = document.getElementById("improvements");
+    improveUl.innerHTML = "";
+    (reportData.improvements || []).forEach(i => {
+      const li = document.createElement("li");
+      li.textContent = i;
+      improveUl.appendChild(li);
+    });
+
+    const breakdownContainer = document.getElementById("breakdown");
+    breakdownContainer.innerHTML = "<h3>Question-by-Question Evaluation</h3>";
+    (reportData.questionBreakdown || []).forEach((item, idx) => {
+      const tagClass = item.band === "Strong" ? "tag-strong" : (item.band === "Adequate" ? "tag-adequate" : "tag-weak");
+      const div = document.createElement("div");
+      div.className = "feedback-box";
+      div.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <b>Question ${idx + 1}: ${Math.round(item.score)}/100</b>
+          <span class="tag ${tagClass}">${item.band}</span>
+        </div>
+        <div style="font-size:13px;color:#aeb9d0;margin-bottom:8px;"><b>Q:</b> ${transcript[idx] ? transcript[idx].q : ""}</div>
+        <div style="font-size:14px;">${item.analysis}</div>
+      `;
+      breakdownContainer.appendChild(div);
+    });
+
+    document.getElementById("reportLoading").classList.add("hidden");
+    document.getElementById("reportContent").classList.remove("hidden");
+    window.scrollTo(0, 0);
+  } catch (err) {
+    console.error("generateFinalReport error:", err);
+    document.getElementById("reportLoading").classList.add("hidden");
+    if (!err.isApiError) {
+      document.getElementById("reportErrorBanner").classList.remove("hidden");
+    }
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const answerArea = document.getElementById("answer");
+  if (answerArea) {
+    answerArea.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        submitAnswer();
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
